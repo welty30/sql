@@ -1,0 +1,265 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf610
+{\fonttbl\f0\fmodern\fcharset0 Courier-Oblique;\f1\fmodern\fcharset0 Courier;\f2\fmodern\fcharset0 Courier-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red51\green110\blue109;\red242\green242\blue242;\red38\green38\blue38;
+\red15\green112\blue1;\red83\green83\blue83;\red169\green14\blue26;}
+{\*\expandedcolortbl;;\cssrgb\c25098\c50196\c50196;\cssrgb\c96078\c96078\c96078;\cssrgb\c20000\c20000\c20000;
+\cssrgb\c0\c50196\c0;\cssrgb\c40000\c40000\c40000;\cssrgb\c72941\c12941\c12941;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\i\fs37\fsmilli18667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 /* query 1: top 20 grossing movies */
+\f1\i0 \cf4 \strokec4 \
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  movie_name,\
+       
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (sale) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  total_sale\
+
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4 \
+  (
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  f.title 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  movie_name,\
+          p.amount 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sale\
+   
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4  film f\
+   
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  inventory i 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  f.film_id\cf6 \strokec6 =\cf4 \strokec4 i.film_id\
+   
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  rental r 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  r.inventory_id\cf6 \strokec6 =\cf4 \strokec4 i.inventory_id\
+   
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  payment p 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  p.rental_id\cf6 \strokec6 =\cf4 \strokec4 r.rental_id) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  t1\
+
+\f2\b \cf5 \strokec5 GROUP
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  movie_name\
+
+\f2\b \cf5 \strokec5 ORDER
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  total_sale 
+\f2\b \cf5 \strokec5 DESC
+\f1\b0 \cf4 \strokec4 \
+
+\f2\b \cf5 \strokec5 LIMIT
+\f1\b0 \cf4 \strokec4  \cf6 \strokec6 20\cf4 \strokec4 ;\
+\
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\i \cf2 \strokec2 /* query 2: who watches the longest movies?*/
+\f1\i0 \cf4 \strokec4 \
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 DISTINCT
+\f1\b0 \cf4 \strokec4  country,\
+                
+\f2\b \cf5 \strokec5 AVG
+\f1\b0 \cf4 \strokec4 (film.
+\f2\b \cf5 \strokec5 length
+\f1\b0 \cf4 \strokec4 ) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  film_duration\
+
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4  country\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  city 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  city.country_id\cf6 \strokec6 =\cf4 \strokec4 country.country_id\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  address 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  address.city_id\cf6 \strokec6 =\cf4 \strokec4 city.city_id\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  customer 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  customer.address_id\cf6 \strokec6 =\cf4 \strokec4 address.address_id\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  rental 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  rental.customer_id\cf6 \strokec6 =\cf4 \strokec4 customer.customer_id\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  inventory 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  inventory.inventory_id\cf6 \strokec6 =\cf4 \strokec4 rental.inventory_id\
+
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  film 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  film.film_id\cf6 \strokec6 =\cf4 \strokec4 inventory.film_id\
+
+\f2\b \cf5 \strokec5 GROUP
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  country;\
+\
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\i \cf2 \strokec2 /* query 3: calculate running sales total by staff with last name 'Stephens'  */
+\f1\i0 \cf4 \strokec4 \
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  last_name,\
+       date_trunc, \cf5 \strokec5 date\cf4 \strokec4 , 
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (sales_by_staff) OVER (\
+                                                   
+\f2\b \cf5 \strokec5 ORDER
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  \cf5 \strokec5 date\cf4 \strokec4 ) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sales_by_staff_over_time\
+
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4 \
+  (
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  s.last_name 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  last_name,\
+          p.amount 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  payment,\
+          p.payment_date 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  \cf5 \strokec5 date\cf4 \strokec4 ,\
+          DATE_TRUNC(\cf7 \strokec7 'day'\cf4 \strokec4 , p.payment_date) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  date_trunc,\
+          
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (p.amount) OVER (PARTITION 
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  s.staff_id\
+                              
+\f2\b \cf5 \strokec5 ORDER
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  p.payment_date) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sales_by_staff\
+   
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4  payment p\
+   
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  staff s 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  p.staff_id\cf6 \strokec6 =\cf4 \strokec4 s.staff_id) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  t1\
+
+\f2\b \cf5 \strokec5 WHERE
+\f1\b0 \cf4 \strokec4  last_name\cf6 \strokec6 =\cf7 \strokec7 'Stephens'\cf4 \strokec4 ;\
+\
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f0\i \cf2 \strokec2 /* query 4:  building from previous query, partition by day*/
+\f1\i0 \cf4 \strokec4 \
+\pard\pardeftab720\sl400\partightenfactor0
+
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 DISTINCT
+\f1\b0 \cf4 \strokec4  date_trunc,\
+                
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (sales_by_staff_over_time) OVER (PARTITION 
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  date_trunc) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sales_by_day\
+
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4 \
+  (
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  last_name,\
+          date_trunc, \cf5 \strokec5 date\cf4 \strokec4 , 
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (sales_by_staff) OVER (\
+                                                      
+\f2\b \cf5 \strokec5 ORDER
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  \cf5 \strokec5 date\cf4 \strokec4 ) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sales_by_staff_over_time\
+   
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4 \
+     (
+\f2\b \cf5 \strokec5 SELECT
+\f1\b0 \cf4 \strokec4  s.last_name 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  last_name,\
+             p.amount 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  payment,\
+             p.payment_date 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  \cf5 \strokec5 date\cf4 \strokec4 ,\
+             DATE_TRUNC(\cf7 \strokec7 'day'\cf4 \strokec4 , p.payment_date) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  date_trunc,\
+             
+\f2\b \cf5 \strokec5 SUM
+\f1\b0 \cf4 \strokec4 (p.amount) OVER (PARTITION 
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  s.staff_id\
+                                 
+\f2\b \cf5 \strokec5 ORDER
+\f1\b0 \cf4 \strokec4  
+\f2\b \cf5 \strokec5 BY
+\f1\b0 \cf4 \strokec4  p.payment_date) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  sales_by_staff\
+      
+\f2\b \cf5 \strokec5 FROM
+\f1\b0 \cf4 \strokec4  payment p\
+      
+\f2\b \cf5 \strokec5 JOIN
+\f1\b0 \cf4 \strokec4  staff s 
+\f2\b \cf5 \strokec5 ON
+\f1\b0 \cf4 \strokec4  p.staff_id\cf6 \strokec6 =\cf4 \strokec4 s.staff_id) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  t1\
+   
+\f2\b \cf5 \strokec5 WHERE
+\f1\b0 \cf4 \strokec4  last_name\cf6 \strokec6 =\cf7 \strokec7 'Stephens'\cf4 \strokec4 ) 
+\f2\b \cf5 \strokec5 AS
+\f1\b0 \cf4 \strokec4  t2;\
+}
