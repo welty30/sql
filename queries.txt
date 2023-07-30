@@ -1,0 +1,73 @@
+/* query 1: top 20 grossing movies */
+SELECT 
+	movie_name, 
+	SUM(sale) AS total_sale
+FROM
+	(SELECT f.title AS movie_name, p.amount AS sale
+FROM film f
+JOIN inventory i
+ON f.film_id=i.film_id
+JOIN rental r
+ON r.inventory_id=i.inventory_id
+JOIN payment p
+ON p.rental_id=r.rental_id) AS t1
+GROUP BY movie_name
+ORDER BY total_sale DESC 
+LIMIT 20;
+
+
+/* query 2: who watches the longest movies?*/
+SELECT DISTINCT country, AVG(film.length) AS film_duration 
+FROM country
+JOIN city
+ON city.country_id=country.country_id
+JOIN address 
+ON address.city_id=city.city_id
+JOIN customer
+ON customer.address_id=address.address_id
+JOIN rental
+ON rental.customer_id=customer.customer_id
+JOIN inventory
+ON inventory.inventory_id=rental.inventory_id
+JOIN film 
+ON film.film_id=inventory.film_id
+GROUP BY country;
+
+Note: i noticed that the payment amounts associated with the film title 'Telegraph Voyage' varied. Maybe I did something wrong?
+
+
+/* query 3: calculate running sales total by staff with last name 'Stephens'  */
+SELECT last_name, date_trunc, date, SUM(sales_by_staff) OVER (ORDER BY date) AS sales_by_staff_over_time 
+FROM 
+(SELECT s.last_name AS last_name, p.amount AS payment, p.payment_date as date, DATE_TRUNC('day',p.payment_date) as date_trunc, SUM(p.amount) 
+OVER (PARTITION BY s.staff_id ORDER BY p.payment_date) AS sales_by_staff 
+FROM payment p 
+JOIN staff s 
+ON p.staff_id=s.staff_id) AS t1
+WHERE last_name='Stephens';
+
+
+
+/* query 4:  building from previous query, partition by day*/
+SELECT DISTINCT date_trunc, SUM(sales_by_staff_over_time) OVER (PARTITION BY date_trunc) AS sales_by_day
+FROM
+(SELECT last_name, date_trunc, date, SUM(sales_by_staff) OVER (ORDER BY date) AS sales_by_staff_over_time 
+FROM 
+(SELECT s.last_name AS last_name, p.amount AS payment, p.payment_date as date, DATE_TRUNC('day',p.payment_date) as date_trunc, SUM(p.amount) 
+OVER (PARTITION BY s.staff_id ORDER BY p.payment_date) AS sales_by_staff 
+FROM payment p 
+JOIN staff s 
+ON p.staff_id=s.staff_id) AS t1
+WHERE last_name='Stephens') AS t2;
+
+
+
+
+######WORKSPACE for psql copies######
+
+\copy (SELECT DISTINCT country, AVG(film.length) AS film_duration FROM country JOIN city ON city.country_id=country.country_id JOIN address ON address.city_id=city.city_id JOIN customer ON customer.address_id=address.address_id JOIN rental ON rental.customer_id=customer.customer_id JOIN inventory ON inventory.inventory_id=rental.inventory_id JOIN film  ON film.film_id=inventory.film_id GROUP BY country) to '/Users/joshuawelty/Desktop/bootcamp/longest.csv' with csv header
+
+
+\copy (SELECT title from film) to '/Users/joshuawelty/Desktop/bootcamp/foo.csv' with csv header
+
+
